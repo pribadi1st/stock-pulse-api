@@ -25,6 +25,35 @@ model EarningsCalendar {
   revenueEstimate BigInt
   year Int
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
+model Industries {
+  id    Int     @default(autoincrement()) @id
+  name String
+  companies Companies[]
+}
+
+model Companies {
+  id    Int     @default(autoincrement()) @id
+  symbol String @unique
+  name String
+  displaySymbol String
+  currency String
+  figi String
+  mic String
+  type String
+  country String?
+  exchange String?
+  ipo DateTime?
+  marketCapitalization BigInt?
+  shareOutstanding BigInt?
+  phone String?
+  webUrl String?
+  logo String?
+  industry Industries? @relation(fields: [industryId], references: [id])
+  industryId Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
