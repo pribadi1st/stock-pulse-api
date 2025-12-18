@@ -6,21 +6,27 @@ import { ConfigService } from '@nestjs/config';
 import { EarningsCalendarResponse } from 'types/earnings';
 import { firstValueFrom } from 'rxjs';
 import { GetEarningDto } from './dto/get-earning.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Earning } from './entities/earning.entity';
 
 @Injectable()
 export class EarningsService {
   private readonly finnhubApiToken: string;
   private readonly finnhubBaseUrl: string;
   constructor(
+    @InjectRepository(Earning)
+    private readonly earningRepository: Repository<Earning>,
     private readonly httpService: HttpService,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
   ) {
     this.finnhubApiToken = this.configService.get<string>('FINNHUB_API_KEY') || '';
     this.finnhubBaseUrl = this.configService.get<string>('FINNHUB_BASE_URL') || '';
   }
 
-  create(createEarningDto: CreateEarningDto) {
-    return 'This action adds a new earning';
+  async create(createEarningDto: CreateEarningDto) {
+    const earningData = this.earningRepository.create(createEarningDto);
+    return await this.earningRepository.save(earningData);
   }
 
   async findAll(query: GetEarningDto): Promise<EarningsCalendarResponse> {

@@ -1,22 +1,4 @@
 -- CreateTable
-CREATE TABLE "EarningsCalendar" (
-    "id" SERIAL NOT NULL,
-    "symbol" TEXT NOT NULL,
-    "date" TIMESTAMP(3) NOT NULL,
-    "epsActual" INTEGER NOT NULL,
-    "epsEstimate" INTEGER NOT NULL,
-    "hour" TEXT NOT NULL,
-    "quarter" INTEGER NOT NULL,
-    "revenueActual" BIGINT NOT NULL,
-    "revenueEstimate" BIGINT NOT NULL,
-    "year" INTEGER NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "EarningsCalendar_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "Industries" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,

@@ -13,21 +13,6 @@ datasource db {
   provider = "postgresql"
 }
 
-model EarningsCalendar {
-  id    Int     @default(autoincrement()) @id
-  symbol String
-  date DateTime
-  epsActual Int
-  epsEstimate Int
-  hour String
-  quarter Int
-  revenueActual BigInt
-  revenueEstimate BigInt
-  year Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-}
-
 model Industries {
   id    Int     @default(autoincrement()) @id
   name String
@@ -54,6 +39,26 @@ model Companies {
   industry Industries? @relation(fields: [industryId], references: [id])
   industryId Int?
 
+  earningsCalendar EarningsCalendar[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model EarningsCalendar {
+  id    Int     @default(autoincrement()) @id
+  symbol String
+  date DateTime
+  epsActual Float?
+  epsEstimate Float?
+  hour String?
+  quarter Int?
+  revenueActual BigInt?
+  revenueEstimate BigInt?
+  year Int?
+  company Companies @relation(fields: [symbol], references: [symbol])
+
+  @@unique([symbol, date])
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 }
