@@ -3,7 +3,7 @@ import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { Company } from './entities/company.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 
 @Injectable()
 export class CompaniesService {
@@ -21,19 +21,36 @@ export class CompaniesService {
     }
   }
 
+  findNonUpdatedCompany() {
+    try {
+      return this.companyRepository.find({ where: { marketCapitalization: IsNull() }, order: { id: 'ASC' } });
+    } catch (e) {
+      throw new Error(e);
+    }
+  }
+
   findAll() {
-    return `This action returns all companies`;
+    try {
+      return this.companyRepository.find();
+    } catch (e) {
+      throw new Error(e);
+    }
   }
 
   findOne(id: number) {
     return `This action returns a #${id} company`;
   }
 
-  update(id: number, updateCompanyDto: UpdateCompanyDto) {
-    return `This action updates a #${id} company`;
+  async update(id: number, updateCompanyDto: UpdateCompanyDto) {
+    const updatedData = await this.companyRepository.update({ id }, updateCompanyDto);
+    return updatedData;
   }
 
   remove(id: number) {
     return `This action removes a #${id} company`;
+  }
+
+  removeBySymbol(symbol: string) {
+    return this.companyRepository.delete({ symbol });
   }
 }

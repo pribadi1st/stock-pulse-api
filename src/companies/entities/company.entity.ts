@@ -33,6 +33,30 @@ export class Company {
     @OneToMany(() => Earning, earning => earning.company)
     earnings: Earning[];
 
+    @Column({ nullable: true, type: 'varchar', length: 255 })
+    country: string | null;
+
+    @Column({ nullable: true, type: 'varchar', length: 255 })
+    exchange: string | null;
+
+    @Column({ nullable: true, type: 'date' })
+    ipo: Date | null;
+
+    @Column({ type: 'float', nullable: true })
+    marketCapitalization: number | null;
+
+    @Column({ type: 'bigint', nullable: true })
+    shareOutstanding: bigint | null;
+
+    @Column({ nullable: true, type: 'varchar', length: 255 })
+    phone: string | null;
+
+    @Column({ nullable: true, type: 'varchar', length: 255 })
+    webUrl: string | null;
+
+    @Column({ nullable: true, type: 'varchar', length: 255 })
+    logo: string | null;
+
     @UpdateDateColumn({
         default: () => 'CURRENT_TIMESTAMP(6)',
         name: 'updatedAt',

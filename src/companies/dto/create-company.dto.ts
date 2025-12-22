@@ -1,32 +1,62 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsDateString, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateCompanyDto {
     @IsNotEmpty()
     @IsString()
     symbol: string;
+
+    @IsString()
     displaySymbol: string;
 
     @IsString()
+    @IsOptional()
     name: string;
+
+    @IsString()
+    @IsOptional()
     currency: string;
+
+    @IsString()
+    @IsOptional()
     figi: string;
+
+    @IsString()
+    @IsOptional()
     type: string;
+
+    @IsString()
+    @IsOptional()
     mic: string;
-    //     symbol String @unique
-    //   name String
-    //   displaySymbol String
-    //   currency String
-    //   figi String
-    //   mic String
-    //   type String
-    //   country String
-    //   exchange String
-    //   ipo DateTime
-    //   marketCapitalization BigInt
-    //   shareOutstanding BigInt
-    //   phone String
-    //   webUrl String
-    //   logo String
-    //   industry Industry? @relation(fields: [industryId], references: [id])
-    //   industryId Int?
+
+    @IsString()
+    @IsOptional()
+    country: string | null;
+
+    @IsString()
+    @IsOptional()
+    exchange: string | null;
+
+    @IsDateString()
+    @IsOptional()
+    ipo: Date | null;
+
+    @IsNumber()
+    @IsOptional()
+    marketCapitalization: number | null;
+
+    @IsNumber()
+    @IsOptional()
+    shareOutstanding: bigint | null;
+
+    @IsString()
+    @IsOptional()
+    phone: string | null;
+
+    @IsString()
+    @IsOptional()
+    webUrl: string | null;
+
+    @IsString()
+    @IsOptional()
+    logo: string | null;
 }

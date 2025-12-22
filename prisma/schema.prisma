@@ -31,8 +31,8 @@ model Companies {
   country String?
   exchange String?
   ipo DateTime?
-  marketCapitalization BigInt?
-  shareOutstanding BigInt?
+  marketCapitalization Float?
+  shareOutstanding Float?
   phone String?
   webUrl String?
   logo String?

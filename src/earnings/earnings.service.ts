@@ -29,14 +29,15 @@ export class EarningsService {
     return await this.earningRepository.save(earningData);
   }
 
-  async findAll(query: GetEarningDto): Promise<EarningsCalendarResponse> {
+  async findAll(query: GetEarningDto) {
     const { from, to } = query
-    const { data } = await firstValueFrom(
-      this.httpService.get<EarningsCalendarResponse>(`calendar/earnings?from=${from}&to=${to}&token=${this.finnhubApiToken}`, {
-        baseURL: this.finnhubBaseUrl
-      })
-    )
-    return data;
+    const result = await this.earningRepository
+      .createQueryBuilder('earnings')
+      .leftJoinAndSelect('earnings.company', 'company')
+      .select(['earnings', 'company.name', 'company.logo'])
+      .where('earnings.date BETWEEN :from AND :to', { from, to })
+      .getMany();
+    return result;
   }
 
   findOne(id: number) {

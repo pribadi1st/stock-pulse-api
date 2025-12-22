@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Companies" ALTER COLUMN "marketCapitalization" SET DATA TYPE DOUBLE PRECISION,
+ALTER COLUMN "shareOutstanding" SET DATA TYPE DOUBLE PRECISION;
