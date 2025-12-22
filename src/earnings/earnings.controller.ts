@@ -15,7 +15,6 @@ export class EarningsController {
 
   @Get()
   findAll(@Query() query: GetEarningDto) {
-    console.log("query:", query);
     return this.earningsService.findAll(query);
   }
 
