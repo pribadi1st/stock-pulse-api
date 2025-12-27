@@ -16,9 +16,8 @@ async function bootstrap() {
     try {
         logger.log("Updating companies without market cap data");
         const companies = await companiesService.findNonUpdatedCompany();
-        console.log("companies:", companies.length);
         const chunkSize = 30;
-        for (let i = 0; i < 30; i += chunkSize) {
+        for (let i = 0; i < companies.length; i += chunkSize) {
             const chunk = companies.slice(i, i + chunkSize);
             // Use only ONE Promise.all per chunk
             await Promise.all(chunk.map(async (company: any) => {
@@ -33,12 +32,14 @@ async function bootstrap() {
                     logger.error(`API Error for ${symbol}: ${response.status} - ${errorText.substring(0, 100)}`);
                     return;
                 }
-
                 const data = await response.json();
-                if (data.shareOutstanding === null) {
-                    companiesService.removeBySymbol(symbol);
-                    return;
-                }
+                // if (data.shareOutstanding === null) {
+                //     console.log(symbol, "kosong")
+                //     // companiesService.removeBySymbol(symbol);
+                //     return;
+                // } else {
+                //     console.log('success', company.symbol)
+                // }
 
                 const updatedData: UpdateCompanyDto = {
                     marketCapitalization: data.marketCapitalization,
@@ -52,8 +53,8 @@ async function bootstrap() {
 
                 await companiesService.update(company.id, updatedData);
             }));
-
-            // await new Promise(resolve => setTimeout(resolve, 60000));
+            console.log("waiting for 1 minute")
+            await new Promise(resolve => setTimeout(resolve, 60000));
         }
     } catch (e) {
         logger.error("Update company logging error", e);

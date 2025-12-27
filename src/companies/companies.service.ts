@@ -23,7 +23,7 @@ export class CompaniesService {
 
   findNonUpdatedCompany() {
     try {
-      return this.companyRepository.find({ where: { marketCapitalization: IsNull() }, order: { id: 'ASC' } });
+      return this.companyRepository.find({ where: { marketCapitalization: IsNull(), type: 'Common Stock' }, order: { id: 'ASC' } });
     } catch (e) {
       throw new Error(e);
     }
