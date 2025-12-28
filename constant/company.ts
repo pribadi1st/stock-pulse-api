@@ -14,5 +14,6 @@ export const COMPANY_CONSTANT_DEFAULT = {
     phone: null,
     webUrl: null,
     logo: null,
+    delisted: false,
 };
 

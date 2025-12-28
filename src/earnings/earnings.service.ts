@@ -12,17 +12,10 @@ import { Earning } from './entities/earning.entity';
 
 @Injectable()
 export class EarningsService {
-  private readonly finnhubApiToken: string;
-  private readonly finnhubBaseUrl: string;
   constructor(
     @InjectRepository(Earning)
-    private readonly earningRepository: Repository<Earning>,
-    private readonly httpService: HttpService,
-    private readonly configService: ConfigService,
-  ) {
-    this.finnhubApiToken = this.configService.get<string>('FINNHUB_API_KEY') || '';
-    this.finnhubBaseUrl = this.configService.get<string>('FINNHUB_BASE_URL') || '';
-  }
+    private readonly earningRepository: Repository<Earning>
+  ) { }
 
   async create(createEarningDto: CreateEarningDto) {
     const earningData = this.earningRepository.create(createEarningDto);
