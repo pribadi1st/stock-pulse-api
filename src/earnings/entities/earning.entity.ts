@@ -3,7 +3,7 @@ import { Company } from "../../companies/entities/company.entity";
 import { Type } from "class-transformer";
 
 @Entity({
-    name: 'EarningsCalendar'
+    name: 'earnings_calendar'
 })
 export class Earning {
     @PrimaryGeneratedColumn()

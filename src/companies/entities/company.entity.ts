@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from "typeorm";
 import { Earning } from "../../earnings/entities/earning.entity";
 
-@Entity({ name: "Companies" })
+@Entity({ name: "companies" })
 export class Company {
     @PrimaryGeneratedColumn()
     id: number;
@@ -56,6 +56,9 @@ export class Company {
 
     @Column({ nullable: true, type: 'varchar', length: 255 })
     logo: string | null;
+
+    @Column({ nullable: false, default: false })
+    delisted: boolean;
 
     @UpdateDateColumn({
         default: () => 'CURRENT_TIMESTAMP(6)',

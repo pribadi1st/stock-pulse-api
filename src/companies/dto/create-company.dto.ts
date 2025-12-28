@@ -1,4 +1,4 @@
-import { IsDateString, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsDateString, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateCompanyDto {
     @IsNotEmpty()
@@ -59,4 +59,8 @@ export class CreateCompanyDto {
     @IsString()
     @IsOptional()
     logo: string | null;
+
+    @IsBoolean()
+    @IsOptional()
+    delisted: boolean;
 }

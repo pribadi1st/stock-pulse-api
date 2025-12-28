@@ -13,13 +13,15 @@ datasource db {
   provider = "postgresql"
 }
 
-model Industries {
+model Industry {
   id    Int     @default(autoincrement()) @id
   name String
-  companies Companies[]
+  companies Company[]
+
+  @@map("industries")
 }
 
-model Companies {
+model Company {
   id    Int     @default(autoincrement()) @id
   symbol String @unique
   name String
@@ -36,13 +38,19 @@ model Companies {
   phone String?
   webUrl String?
   logo String?
-  industry Industries? @relation(fields: [industryId], references: [id])
+  industry Industry? @relation(fields: [industryId], references: [id])
   industryId Int?
 
-  earningsCalendar EarningsCalendar[]
+  delisted Boolean @default(false)
+
+  earningsCalendars EarningsCalendar[]
+  portfolios Portfolio[]
+  transactions Transaction[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("companies")
 }
 
 model EarningsCalendar {
@@ -56,9 +64,60 @@ model EarningsCalendar {
   revenueActual BigInt?
   revenueEstimate BigInt?
   year Int?
-  company Companies @relation(fields: [symbol], references: [symbol])
+  company Company @relation(fields: [symbol], references: [symbol])
 
   @@unique([symbol, date])
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("earnings_calendar")
+}
+
+model User {
+  id            String        @id @db.Uuid
+  email         String        @unique
+  display_name  String?
+  phone         String?
+  providers     String?
+  provider_type String?
+  
+  // Relations
+  portfolios    Portfolio[]
+  transactions  Transaction[]
+
+  @@map("users")
+}
+
+model Portfolio {
+  id        Int       @id @default(autoincrement())
+  userId    String    @db.Uuid
+  symbol    String    
+  quantity  Float     @default(0)
+  avgPrice  Float    
+  
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company   Company   @relation(fields: [symbol], references: [symbol])
+
+  @@unique([userId, symbol]) // One entry per stock per user
+  @@map("portfolios")
+}
+
+model Transaction {
+  id       Int             @id @default(autoincrement())
+  symbol   String
+  type     TransactionType  // Using the enum here
+  quantity Float
+  price    Float
+  userId   String          @db.Uuid
+  
+  // Relations
+  company  Company  @relation(fields: [symbol], references: [symbol])
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("transactions")
+}
+
+enum TransactionType {
+  BUY
+  SELL
 }

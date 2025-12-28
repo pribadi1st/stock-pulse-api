@@ -22,7 +22,7 @@ async function bootstrap() {
             // Use only ONE Promise.all per chunk
             await Promise.all(chunk.map(async (company: any) => {
                 symbol = company.symbol;
-                const apiUrl = `${baseURL}/stock/profile2?symbol=${symbol}&token=${apiKey}`;
+                const apiUrl = `${baseURL}/stock/profile2?symbol=${company.symbol}&token=${apiKey}`;
 
                 const response = await fetch(apiUrl);
 
@@ -33,19 +33,17 @@ async function bootstrap() {
                     return;
                 }
                 const data = await response.json();
-                // if (data.shareOutstanding === null) {
-                //     console.log(symbol, "kosong")
-                //     // companiesService.removeBySymbol(symbol);
-                //     return;
-                // } else {
-                //     console.log('success', company.symbol)
-                // }
+                if (!data || !data.marketCapitalization) {
+                    await companiesService.update(company.id, { delisted: true });
+                    return;
+                }
+                logger.log(`Updated company ${company.symbol}`);
 
                 const updatedData: UpdateCompanyDto = {
                     marketCapitalization: data.marketCapitalization,
                     shareOutstanding: data.shareOutstanding,
-                    ipo: data.ipo,
-                    country: data.country,
+                    ipo: data.ipo || null,
+                    country: data.country || null,
                     webUrl: data.weburl || null,
                     logo: data.logo || null,
                     phone: data.phone || null,
