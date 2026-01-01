@@ -23,9 +23,15 @@ export class CompaniesController {
     return this.companiesService.search(searchCompanyDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.companiesService.findOne(+id);
+  @Get(':symbol')
+  findOne(@Param('symbol') symbol: string) {
+    try {
+      const company = this.companiesService.findOne(symbol);
+      return company;
+    } catch (e) {
+      console.log("error")
+      return e;
+    }
   }
 
   @Patch(':id')

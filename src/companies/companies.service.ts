@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { Company } from './entities/company.entity';
@@ -107,8 +107,21 @@ export class CompaniesService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} company`;
+  async findOne(symbol: string) {
+    const splittedSymbol = symbol.split('-');
+    if (splittedSymbol.length != 2) {
+      throw new HttpException('Invalid symbol format', HttpStatus.BAD_REQUEST);
+    }
+    try {
+      const company = await this.companyRepository.findOneByOrFail({
+        exchange: splittedSymbol[0].toUpperCase(),
+        symbol: splittedSymbol[1].toUpperCase(),
+        delisted: false
+      })
+      return company;
+    } catch (e) {
+      throw new HttpException('Company not found', HttpStatus.NOT_FOUND);
+    }
   }
 
   async update(id: number, updateCompanyDto: UpdateCompanyDto) {
