@@ -1,8 +1,8 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { WatchlistService } from './watchlist.service';
-import { CreateWatchlistDto } from './dto/create-watchlist.dto';
-import { UpdateWatchlistDto } from './dto/update-watchlist.dto';
-import { GetUser } from 'src/auth/get-user.decorator';
+// import { CreateWatchlistDto } from './dto/create-watchlist.dto';
+// import { UpdateWatchlistDto } from './dto/update-watchlist.dto';
+import { GetUser } from '../auth/get-user.decorator';
 
 @Controller('watchlist')
 export class WatchlistController {

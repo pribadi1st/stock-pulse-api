@@ -100,17 +100,20 @@ export class CompaniesService {
     }
   }
 
-  async findOne(symbol: string) {
+  async findOne(userId: string, symbol: string) {
     const splittedSymbol = symbol.split('-');
     if (splittedSymbol.length != 2) {
       throw new HttpException('Invalid symbol format', HttpStatus.BAD_REQUEST);
     }
     try {
-      const company = await this.companyRepository.findOneByOrFail({
-        exchange: splittedSymbol[0].toUpperCase(),
-        symbol: splittedSymbol[1].toUpperCase(),
-        delisted: false
-      })
+      const company = await this.companyRepository.createQueryBuilder("c")
+        .leftJoin('watchlists', 'w', 'w.symbol = c.symbol AND w.user_id = :userId', { userId })
+        .select('c.*')
+        .addSelect('CASE WHEN w.id IS NOT NULL THEN true ELSE false END', 'is_watchlist')
+        .where("c.exchange = :exchange", { exchange: splittedSymbol[0].toUpperCase() })
+        .andWhere("c.symbol = :symbol", { symbol: splittedSymbol[1].toUpperCase() })
+        .andWhere("c.delisted = :delisted", { delisted: false })
+        .getRawOne();
       return company;
     } catch (e) {
       throw new HttpException('Company not found', HttpStatus.NOT_FOUND);

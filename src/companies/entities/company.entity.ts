@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from "typeorm";
 import { Earning } from "../../earnings/entities/earning.entity";
+import { Watchlist } from "src/watchlist/entities/watchlist.entity";
 
 @Entity({ name: "companies" })
 export class Company {
@@ -60,9 +61,8 @@ export class Company {
     @Column({ nullable: false, default: false })
     delisted: boolean;
 
-    // Inside your Company entity
-    @Column({ select: false, insert: false, update: false, nullable: true })
-    isWatchlisted: boolean;
+    @OneToMany(() => Watchlist, watchlist => watchlist.company)
+    watchlists: Watchlist[];
 
     @UpdateDateColumn({
         default: () => 'CURRENT_TIMESTAMP(6)',

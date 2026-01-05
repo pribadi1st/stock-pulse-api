@@ -27,9 +27,9 @@ export class CompaniesController {
   }
 
   @Get(':symbol')
-  findOne(@Param('symbol') symbol: string) {
+  findOne(@Param('symbol') symbol: string, @GetUser('sub') userId: string) {
     try {
-      const company = this.companiesService.findOne(symbol);
+      const company = this.companiesService.findOne(userId, symbol);
       return company;
     } catch (e) {
       return e;
