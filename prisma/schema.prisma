@@ -25,7 +25,7 @@ model Company {
   id    Int     @default(autoincrement()) @id
   symbol String @unique
   name String
-  displaySymbol String
+  displaySymbol String @map("display_symbol")
   currency String
   figi String
   mic String
@@ -33,10 +33,10 @@ model Company {
   country String?
   exchange String?
   ipo DateTime?
-  marketCapitalization Float?
-  shareOutstanding Float?
+  marketCapitalization Float? @map("market_capitalization")
+  shareOutstanding Float? @map("share_outstanding")
   phone String?
-  webUrl String?
+  webUrl String? @map("web_url")
   logo String?
   industry Industry? @relation(fields: [industryId], references: [id])
   industryId Int?
@@ -50,6 +50,8 @@ model Company {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
+  watchlist Watchlist[]
+
   @@map("companies")
 }
 
@@ -57,12 +59,12 @@ model EarningsCalendar {
   id    Int     @default(autoincrement()) @id
   symbol String
   date DateTime
-  epsActual Float?
-  epsEstimate Float?
-  hour String?
+  epsActual Float? @map("eps_actual")
+  epsEstimate Float? @map("eps_estimate")
+  hour String? 
   quarter Int?
-  revenueActual BigInt?
-  revenueEstimate BigInt?
+  revenueActual BigInt? @map("revenue_actual")
+  revenueEstimate BigInt? @map("revenue_estimate")
   year Int?
   company Company @relation(fields: [symbol], references: [symbol])
 
@@ -85,21 +87,35 @@ model User {
   portfolios    Portfolio[]
   transactions  Transaction[]
 
+  watchlists Watchlist[]
+
   @@map("users")
 }
 
 model Portfolio {
   id        Int       @id @default(autoincrement())
-  userId    String    @db.Uuid
-  symbol    String    
-  quantity  Float     @default(0)
-  avgPrice  Float    
-  
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  company   Company   @relation(fields: [symbol], references: [symbol])
+  userId    String    @db.Uuid @map("user_id")
+  symbol String
+  quantity Float
+  avgPrice Float
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company Company @relation(fields: [symbol], references: [symbol], onDelete: Cascade)
 
   @@unique([userId, symbol]) // One entry per stock per user
   @@map("portfolios")
+}
+
+model Watchlist {
+  id        Int       @id @default(autoincrement())
+  userId    String    @db.Uuid @map("user_id")
+  symbol    String    
+  
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company   Company   @relation(fields: [symbol], references: [symbol], onDelete: Cascade)
+
+  @@unique([userId, symbol]) // One entry per stock per user
+  @@map("watchlists")
 }
 
 model Transaction {
@@ -108,7 +124,7 @@ model Transaction {
   type     TransactionType  // Using the enum here
   quantity Float
   price    Float
-  userId   String          @db.Uuid
+  userId   String          @db.Uuid @map("user_id")
   
   // Relations
   company  Company  @relation(fields: [symbol], references: [symbol])

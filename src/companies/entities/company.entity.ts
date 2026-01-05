@@ -12,7 +12,7 @@ export class Company {
     @Column()
     name: string;
 
-    @Column()
+    @Column({ name: 'display_symbol' })
     displaySymbol: string;
 
     @Column()
@@ -42,16 +42,16 @@ export class Company {
     @Column({ nullable: true, type: 'date' })
     ipo: Date | null;
 
-    @Column({ type: 'float', nullable: true })
+    @Column({ type: 'float', nullable: true, name: 'market_capitalization' })
     marketCapitalization: number | null;
 
-    @Column({ type: 'bigint', nullable: true })
+    @Column({ type: 'bigint', nullable: true, name: 'share_outstanding' })
     shareOutstanding: bigint | null;
 
     @Column({ nullable: true, type: 'varchar', length: 255 })
     phone: string | null;
 
-    @Column({ nullable: true, type: 'varchar', length: 255 })
+    @Column({ nullable: true, type: 'varchar', length: 255, name: 'web_url' })
     webUrl: string | null;
 
     @Column({ nullable: true, type: 'varchar', length: 255 })
@@ -59,6 +59,10 @@ export class Company {
 
     @Column({ nullable: false, default: false })
     delisted: boolean;
+
+    // Inside your Company entity
+    @Column({ select: false, insert: false, update: false, nullable: true })
+    isWatchlisted: boolean;
 
     @UpdateDateColumn({
         default: () => 'CURRENT_TIMESTAMP(6)',

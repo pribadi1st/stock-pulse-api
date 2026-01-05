@@ -13,8 +13,7 @@ async function bootstrap() {
     const baseURL = configService.get<string>('FINNHUB_BASE_URL')
     const apiKey = configService.get<string>('FINNHUB_API_KEY')
     try {
-        logger.log("Earning logging start");
-        const response = await fetch(`${baseURL}/calendar/earnings?from=2026-02-01&to=2026-02-28&token=${apiKey}`);
+        const response = await fetch(`${baseURL}/calendar/earnings?from=2026-03-01&to=2026-03-31&token=${apiKey}`);
         const data = await response.json();
         const earnings = data.earningsCalendar
         // Process earnings in chunks to avoid overwhelming the database

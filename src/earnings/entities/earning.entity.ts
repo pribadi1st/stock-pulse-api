@@ -16,10 +16,10 @@ export class Earning {
     @Type(() => Date)
     date: Date;
 
-    @Column({ type: 'numeric', precision: 10, scale: 4, nullable: true })
+    @Column({ type: 'numeric', precision: 10, scale: 4, nullable: true, name: 'eps_actual' })
     epsActual: number;
 
-    @Column({ type: 'numeric', precision: 10, scale: 4, nullable: true })
+    @Column({ type: 'numeric', precision: 10, scale: 4, nullable: true, name: 'eps_estimate' })
     epsEstimate: number;
 
     @Column({ nullable: true })
@@ -28,10 +28,10 @@ export class Earning {
     @Column({ nullable: true })
     quarter: number;
 
-    @Column({ type: 'bigint', nullable: true })
+    @Column({ type: 'bigint', nullable: true, name: 'revenue_actual' })
     revenueActual: number;
 
-    @Column({ type: 'bigint', nullable: true })
+    @Column({ type: 'bigint', nullable: true, name: 'revenue_estimate' })
     revenueEstimate: number;
 
     @Column()

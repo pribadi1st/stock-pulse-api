@@ -32,7 +32,6 @@ async function bootstrap() {
                     createCompanyData.figi = company.figi as string;
                     createCompanyData.type = company.type as string;
                     createCompanyData.mic = company.mic as string;
-                    console.log(createCompanyData.displaySymbol);
                     await companiesService.create(createCompanyData);
                     logger.debug(`Added company: ${company.symbol}`);
                 } catch (error) {

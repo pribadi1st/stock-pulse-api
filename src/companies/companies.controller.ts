@@ -1,8 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { SearchCompanyDto } from './dto/search-company.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { GetUser } from '../auth/get-user.decorator';
 
 @Controller('companies')
 export class CompaniesController {
@@ -18,9 +20,10 @@ export class CompaniesController {
     return this.companiesService.findAll();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('search')
-  search(@Body() searchCompanyDto: SearchCompanyDto) {
-    return this.companiesService.search(searchCompanyDto);
+  search(@Body() searchCompanyDto: SearchCompanyDto, @GetUser('email') userEmail: string) {
+    return this.companiesService.search(userEmail, searchCompanyDto);
   }
 
   @Get(':symbol')
@@ -29,7 +32,6 @@ export class CompaniesController {
       const company = this.companiesService.findOne(symbol);
       return company;
     } catch (e) {
-      console.log("error")
       return e;
     }
   }

@@ -3,17 +3,12 @@ import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { Company } from './entities/company.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Repository, ILike } from 'typeorm';
+import { IsNull, Repository, ILike, Brackets } from 'typeorm';
 import { SearchCompanyDto } from './dto/search-company.dto';
 import { SearchCompanyResponse } from 'types/company';
 
 @Injectable()
 export class CompaniesService {
-  private DEFAULT_SEARCH_VALUE: SearchCompanyDto = {
-    keyword: '',
-    limit: 10,
-    page: 1
-  };
 
   constructor(
     @InjectRepository(Company)
@@ -29,55 +24,53 @@ export class CompaniesService {
     }
   }
 
-  async search(searchCompanyDto: SearchCompanyDto = this.DEFAULT_SEARCH_VALUE): Promise<SearchCompanyResponse> {
-    // If no keyword provided, search all
-    if (!searchCompanyDto.keyword) {
-      const companies = await this.companyRepository.find({
-        take: searchCompanyDto.limit ?? 10,
-        skip: ((searchCompanyDto.page ?? 1) - 1) * (searchCompanyDto.limit ?? 10),
-        order: { name: 'ASC' },
-        where: {
-          type: 'Common Stock',
-          delisted: false
-        }
-      });
-      return {
-        total: await this.companyRepository.count({ where: { type: 'Common Stock' } }),
-        companies
-      };
+  async search(userEmail: string, searchCompanyDto: SearchCompanyDto): Promise<SearchCompanyResponse> {
+    const limit = searchCompanyDto.limit ?? 10;
+    const skip = ((searchCompanyDto.page ?? 1) - 1) * limit;
+    const keyword = searchCompanyDto.keyword || '';
+
+    const query = this.companyRepository.createQueryBuilder('c')
+      .leftJoin('watchlists', 'w', 'w.symbol = c.symbol AND w.user_id = (SELECT u.id FROM users u WHERE u.email = :userEmail)', { userEmail })
+      .select('c.*')
+      .addSelect('CASE WHEN w.id IS NOT NULL THEN true ELSE false END', 'is_watchlist')
+      .where('c.type = :type', { type: 'Common Stock' })
+      .andWhere('c.delisted = :delisted', { delisted: false });
+
+    if (keyword) {
+      query.andWhere(
+        new Brackets((qb) => {
+          qb.where('c.name ILIKE :keyword', { keyword: `%${keyword}%` })
+            .orWhere('c.symbol ILIKE :keyword', { keyword: `%${keyword}%` });
+        }),
+      );
     }
-    const companies = await this.companyRepository.find({
-      where: [{
-        name: ILike(`%${searchCompanyDto.keyword}%`),
-        type: 'Common Stock',
-        delisted: false
-      },
-      {
-        symbol: ILike(`%${searchCompanyDto.keyword}%`),
-        type: 'Common Stock',
-        delisted: false
-      }],
-      take: searchCompanyDto.limit ?? 10,
-      skip: ((searchCompanyDto.page ?? 1) - 1) * (searchCompanyDto.limit ?? 10),
-      order: { name: 'ASC' }
-    });
+
+    query
+      .orderBy('c.marketCapitalization', 'DESC')
+      .limit(limit)
+      .offset(skip);
+
+    const [companies, total] = await Promise.all([
+      query.getRawMany(),
+      this.getSearchCount(keyword)
+    ]);
+
     return {
-      total: await this.companyRepository.count({
-        where: [
-          {
-            name: ILike(`%${searchCompanyDto.keyword}%`),
-            type: 'Common Stock',
-            delisted: false
-          },
-          {
-            symbol: ILike(`%${searchCompanyDto.keyword}%`),
-            type: 'Common Stock',
-            delisted: false
-          }
-        ]
-      }),
+      total,
       companies
     };
+  }
+
+  private async getSearchCount(keyword?: string): Promise<number> {
+    const countQuery = this.companyRepository.createQueryBuilder('c')
+      .where('c.type = :type', { type: 'Common Stock' })
+      .andWhere('c.delisted = :delisted', { delisted: false });
+
+    if (keyword) {
+      countQuery.andWhere('(c.name ILIKE :k OR c.symbol ILIKE :k)', { k: `%${keyword}%` });
+    }
+
+    return countQuery.getCount();
   }
 
   findNonUpdatedCompany() {

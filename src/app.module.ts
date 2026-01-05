@@ -7,6 +7,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 import { CompaniesModule } from './companies/companies.module';
 import { EarningsModule } from './earnings/earnings.module';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
+import { SupabaseStrategy } from './auth/supabase.strategy';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -27,9 +31,11 @@ import { EarningsModule } from './earnings/earnings.module';
       inject: [ConfigService],
     }),
     CompaniesModule,
-    EarningsModule
+    EarningsModule,
+    AuthModule,
+    UsersModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, SupabaseStrategy, JwtAuthGuard],
 })
 export class AppModule { }
