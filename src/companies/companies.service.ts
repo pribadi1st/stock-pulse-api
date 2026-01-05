@@ -24,13 +24,13 @@ export class CompaniesService {
     }
   }
 
-  async search(userEmail: string, searchCompanyDto: SearchCompanyDto): Promise<SearchCompanyResponse> {
+  async search(userId: string, searchCompanyDto: SearchCompanyDto): Promise<SearchCompanyResponse> {
     const limit = searchCompanyDto.limit ?? 10;
     const skip = ((searchCompanyDto.page ?? 1) - 1) * limit;
     const keyword = searchCompanyDto.keyword || '';
 
     const query = this.companyRepository.createQueryBuilder('c')
-      .leftJoin('watchlists', 'w', 'w.symbol = c.symbol AND w.user_id = (SELECT u.id FROM users u WHERE u.email = :userEmail)', { userEmail })
+      .leftJoin('watchlists', 'w', 'w.symbol = c.symbol AND w.user_id = :userId', { userId })
       .select('c.*')
       .addSelect('CASE WHEN w.id IS NOT NULL THEN true ELSE false END', 'is_watchlist')
       .where('c.type = :type', { type: 'Common Stock' })

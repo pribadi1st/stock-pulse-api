@@ -11,6 +11,8 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { SupabaseStrategy } from './auth/supabase.strategy';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { WatchlistModule } from './watchlist/watchlist.module';
+import { APP_GUARD } from '@nestjs/core';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -33,9 +35,10 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
     CompaniesModule,
     EarningsModule,
     AuthModule,
-    UsersModule
+    UsersModule,
+    WatchlistModule
   ],
   controllers: [AppController],
-  providers: [AppService, SupabaseStrategy, JwtAuthGuard],
+  providers: [AppService, SupabaseStrategy, JwtAuthGuard, { provide: APP_GUARD, useClass: JwtAuthGuard }],
 })
 export class AppModule { }

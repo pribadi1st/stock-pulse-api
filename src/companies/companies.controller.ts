@@ -22,8 +22,8 @@ export class CompaniesController {
 
   @UseGuards(JwtAuthGuard)
   @Post('search')
-  search(@Body() searchCompanyDto: SearchCompanyDto, @GetUser('email') userEmail: string) {
-    return this.companiesService.search(userEmail, searchCompanyDto);
+  search(@Body() searchCompanyDto: SearchCompanyDto, @GetUser('sub') userId: string) {
+    return this.companiesService.search(userId, searchCompanyDto);
   }
 
   @Get(':symbol')
