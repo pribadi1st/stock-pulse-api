@@ -24,6 +24,15 @@ export class CompaniesService {
     }
   }
 
+  async upsert(createCompanyDto: CreateCompanyDto) {
+    try {
+      const company = await this.companyRepository.upsert(createCompanyDto, ['symbol']);
+      return company;
+    } catch (e) {
+      throw new Error(e);
+    }
+  }
+
   async search(userId: string, searchCompanyDto: SearchCompanyDto): Promise<SearchCompanyResponse> {
     const limit = searchCompanyDto.limit ?? 10;
     const skip = ((searchCompanyDto.page ?? 1) - 1) * limit;

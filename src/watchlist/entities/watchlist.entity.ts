@@ -1,5 +1,5 @@
-import { Company } from "src/companies/entities/company.entity";
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { Company } from "../../companies/entities/company.entity";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
 
 @Entity({ name: 'watchlists' })
 export class Watchlist {
@@ -13,5 +13,6 @@ export class Watchlist {
     userId: string;
 
     @ManyToOne(() => Company, company => company.watchlists)
+    @JoinColumn({ name: 'symbol', referencedColumnName: 'symbol' })
     company: Company;
 }
