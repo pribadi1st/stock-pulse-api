@@ -18,8 +18,14 @@ export class WatchlistService {
   //   return 'This action adds a new watchlist';
   // }
 
-  findAll() {
-    return `This action returns all watchlist`;
+  async findAll(userId: string) {
+    const watchlist = await this.watchlistRepository.find({ where: { userId }, relations: ['company'] });
+    const response = watchlist.map((watchlistItem) => {
+      return {
+        company: watchlistItem.company,
+      }
+    })
+    return response;
   }
 
   // findOne(id: number) {
