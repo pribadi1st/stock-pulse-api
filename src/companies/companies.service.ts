@@ -62,7 +62,6 @@ export class CompaniesService {
     const total = await this.getSearchCount(keyword);
 
     const companies = rawResults.entities.map((company, index) => {
-      console.log(rawResults.raw[index]);
       return {
         ...company,
         isWatchlist: !!rawResults.raw[index].c_is_watchlist
