@@ -22,7 +22,7 @@ export class WatchlistService {
     const watchlist = await this.watchlistRepository.find({ where: { userId }, relations: ['company'] });
     const response = watchlist.map((watchlistItem) => {
       return {
-        company: watchlistItem.company,
+        companies: watchlistItem.company,
       }
     })
     return response;
