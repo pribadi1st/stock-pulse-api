@@ -62,9 +62,10 @@ export class CompaniesService {
     const total = await this.getSearchCount(keyword);
 
     const companies = rawResults.entities.map((company, index) => {
+      console.log(rawResults.raw[index]);
       return {
         ...company,
-        isWatchlist: !!rawResults.raw[index].is_watchlist
+        isWatchlist: !!rawResults.raw[index].c_is_watchlist
       };
     });
 
@@ -116,15 +117,22 @@ export class CompaniesService {
       throw new HttpException('Invalid symbol format', HttpStatus.BAD_REQUEST);
     }
     try {
-      const company = await this.companyRepository.createQueryBuilder("c")
-        .leftJoin('watchlists', 'w', 'w.symbol = c.symbol AND w.user_id = :userId', { userId })
-        .select('c.*')
-        .addSelect('CASE WHEN w.id IS NOT NULL THEN true ELSE false END', 'is_watchlist')
-        .where("c.exchange = :exchange", { exchange: splittedSymbol[0].toUpperCase() })
-        .andWhere("c.symbol = :symbol", { symbol: splittedSymbol[1].toUpperCase() })
-        .andWhere("c.delisted = :delisted", { delisted: false })
-        .getRawOne();
-      return company;
+      const company = await this.companyRepository.findOne({
+        where: {
+          delisted: false,
+          exchange: splittedSymbol[0].toUpperCase(),
+          symbol: splittedSymbol[1].toUpperCase(),
+        },
+        relations: ["watchlists"]
+      })
+      if (!company) {
+        throw new HttpException('Company not found', HttpStatus.NOT_FOUND);
+      }
+      const { watchlists, ...companyDetail } = company;
+      return {
+        ...companyDetail,
+        isWatchlist: !!watchlists.find((watchlist) => watchlist.userId === userId)
+      }
     } catch (e) {
       throw new HttpException('Company not found', HttpStatus.NOT_FOUND);
     }
