@@ -39,9 +39,8 @@ export class CompaniesService {
     const keyword = searchCompanyDto.keyword || '';
 
     const query = this.companyRepository.createQueryBuilder('c')
-      .leftJoin('watchlists', 'w', 'w.symbol = c.symbol AND w.user_id = :userId', { userId })
-      .select('c.*')
-      .addSelect('CASE WHEN w.id IS NOT NULL THEN true ELSE false END', 'is_watchlist')
+      .leftJoin('c.watchlists', 'w', 'w.userId = :userId', { userId })
+      .addSelect('CASE WHEN w.id IS NOT NULL THEN true ELSE false END', 'c_is_watchlist')
       .where('c.type = :type', { type: 'Common Stock' })
       .andWhere('c.delisted = :delisted', { delisted: false });
 
@@ -54,20 +53,22 @@ export class CompaniesService {
       );
     }
 
-    query
+    const rawResults = await query
       .orderBy('c.marketCapitalization', 'DESC')
       .limit(limit)
-      .offset(skip);
+      .offset(skip)
+      .getRawAndEntities();
 
-    const [companies, total] = await Promise.all([
-      query.getRawMany(),
-      this.getSearchCount(keyword)
-    ]);
+    const total = await this.getSearchCount(keyword);
 
-    return {
-      total,
-      companies
-    };
+    const companies = rawResults.entities.map((company, index) => {
+      return {
+        ...company,
+        isWatchlist: !!rawResults.raw[index].is_watchlist
+      };
+    });
+
+    return { total, companies };
   }
 
   private async getSearchCount(keyword?: string): Promise<number> {
