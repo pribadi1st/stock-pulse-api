@@ -51,6 +51,7 @@ model Company {
   updatedAt DateTime @default(now()) @updatedAt
 
   watchlist Watchlist[]
+  news News[]
 
   @@map("companies")
 }
@@ -136,4 +137,23 @@ model Transaction {
 enum TransactionType {
   BUY
   SELL
+}
+
+model News {
+  id    Int     @default(autoincrement()) @id
+  
+  symbol String?
+  category String?
+  datetime DateTime
+  headline String
+  finnhubID Int? @map("finnhub_id")
+  image String?
+  source String?
+  summary String?
+  url String?
+
+  company Company? @relation(fields: [symbol], references: [symbol], onDelete: Cascade)
+  
+  @@index([symbol, headline])
+  @@map("news")
 }

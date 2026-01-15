@@ -3,8 +3,8 @@ import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { SearchCompanyDto } from './dto/search-company.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { GetUser } from '../auth/get-user.decorator';
+import { Public } from 'src/auth/public.decorator';
 
 @Controller('companies')
 export class CompaniesController {
@@ -20,7 +20,6 @@ export class CompaniesController {
     return this.companiesService.findAll();
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post('search')
   search(@Body() searchCompanyDto: SearchCompanyDto, @GetUser('sub') userId: string) {
     return this.companiesService.search(userId, searchCompanyDto);
@@ -30,6 +29,18 @@ export class CompaniesController {
   findOne(@Param('symbol') symbol: string, @GetUser('sub') userId: string) {
     try {
       const company = this.companiesService.findOne(userId, symbol);
+      return company;
+    } catch (e) {
+      return e;
+    }
+  }
+
+
+  @Public()
+  @Get(':symbol/news')
+  getNews(@Param('symbol') symbol: string) {
+    try {
+      const company = this.companiesService.getCompanyNews(symbol);
       return company;
     } catch (e) {
       return e;

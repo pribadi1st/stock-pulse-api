@@ -3,16 +3,21 @@ import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { Company } from './entities/company.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Repository, ILike, Brackets } from 'typeorm';
+import { IsNull, Repository, Brackets } from 'typeorm';
 import { SearchCompanyDto } from './dto/search-company.dto';
 import { SearchCompanyResponse } from 'types/company';
+import YahooFinance from 'yahoo-finance2';
+import { CreateNewsDto } from 'src/news/dto/create-news.dto';
+import { NewsService } from 'src/news/news.service';
 
 @Injectable()
 export class CompaniesService {
 
   constructor(
     @InjectRepository(Company)
-    private readonly companyRepository: Repository<Company>
+    private readonly companyRepository: Repository<Company>,
+    private readonly newsService: NewsService
+
   ) { }
 
   async create(createCompanyDto: CreateCompanyDto) {
@@ -83,6 +88,56 @@ export class CompaniesService {
     return countQuery.getCount();
   }
 
+  private isSymbolValid(symbol: string): boolean {
+    const splittedSymbol = symbol.split('-');
+    if (splittedSymbol.length != 2) {
+      return false;
+    }
+    return true
+  }
+
+  async getCompanyNews(symbol: string) {
+    if (!this.isSymbolValid(symbol)) {
+      throw new HttpException('Invalid symbol format', HttpStatus.BAD_REQUEST);
+    }
+    const splittedSymbol = symbol.split('-');
+    const company = await this.companyRepository.findOne({
+      where: {
+        delisted: false,
+        exchange: splittedSymbol[0].toUpperCase(),
+        symbol: splittedSymbol[1].toUpperCase(),
+      },
+      relations: ["news"]
+    })
+    if (!company) {
+      throw new HttpException('Company not found', HttpStatus.NOT_FOUND);
+    }
+    if (company.news.length == 0) {
+      await this.updateYahooNews(company);
+    }
+    return company.news;
+  }
+
+  private async updateYahooNews(company: Company) {
+    const yahoo = new YahooFinance()
+    const yahooNews = await yahoo.search(company.displaySymbol)
+    if (!yahooNews) {
+      return;
+    }
+    const news = yahooNews.news
+    news.forEach(async (news) => {
+      let newsDto: CreateNewsDto = {
+        symbol: company.symbol,
+        datetime: new Date(news.providerPublishTime),
+        headline: news.title,
+        image: news.thumbnail?.resolutions[0].url || '',
+        source: news.publisher,
+        url: news.link,
+      }
+      await this.newsService.create(newsDto)
+    })
+  }
+
   findNonUpdatedCompany() {
     try {
       const today = new Date();
@@ -112,7 +167,7 @@ export class CompaniesService {
 
   async findOne(userId: string, symbol: string) {
     const splittedSymbol = symbol.split('-');
-    if (splittedSymbol.length != 2) {
+    if (!this.isSymbolValid(symbol)) {
       throw new HttpException('Invalid symbol format', HttpStatus.BAD_REQUEST);
     }
     try {

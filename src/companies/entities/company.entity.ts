@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from "typeorm";
 import { Earning } from "../../earnings/entities/earning.entity";
 import { Watchlist } from "../../watchlist/entities/watchlist.entity";
+import { News } from "src/news/entities/news.entity";
 
 @Entity({ name: "companies" })
 export class Company {
@@ -63,6 +64,9 @@ export class Company {
 
     @OneToMany(() => Watchlist, watchlist => watchlist.company)
     watchlists: Watchlist[];
+
+    @OneToMany(() => News, news => news.company)
+    news: News[]
 
     @UpdateDateColumn({
         default: () => 'CURRENT_TIMESTAMP(6)',
