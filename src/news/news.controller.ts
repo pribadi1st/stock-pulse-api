@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { NewsService } from './news.service';
 import { CreateNewsDto } from './dto/create-news.dto';
 import { UpdateNewsDto } from './dto/update-news.dto';
+import { Public } from 'src/auth/public.decorator';
 
 @Controller('news')
 export class NewsController {
@@ -12,10 +13,12 @@ export class NewsController {
   //   return this.newsService.create(createNewsDto);
   // }
 
-  // @Get()
-  // findAll() {
-  //   return this.newsService.findAll();
-  // }
+  @Get()
+  @Public()
+  findAll(@Query('page') page?: string) {
+    const pageNumber = Number(page) || 1;
+    return this.newsService.findAll(pageNumber);
+  }
 
   // @Get(':id')
   // findOne(@Param('id') id: string) {

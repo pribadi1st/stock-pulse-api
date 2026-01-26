@@ -3,7 +3,7 @@ import { CompaniesService } from './companies.service';
 import { CompaniesController } from './companies.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Company } from './entities/company.entity';
-import { NewsModule } from 'src/news/news.module';
+import { NewsModule } from '../../src/news/news.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Company]), NewsModule],

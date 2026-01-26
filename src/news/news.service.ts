@@ -16,8 +16,14 @@ export class NewsService {
     return this.newsRepository.upsert(createNewsDto, ['symbol', 'headline']);
   }
 
-  findAll() {
-    return `This action returns all news`;
+  findAll(page: number) {
+    return this.newsRepository.find({
+      take: 10,
+      skip: (page - 1) * 10,
+      order: {
+        datetime: 'DESC',
+      },
+    });
   }
 
   findOne(id: number) {

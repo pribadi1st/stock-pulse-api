@@ -3,12 +3,12 @@ import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { Company } from './entities/company.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Repository, Brackets } from 'typeorm';
+import { Repository, Brackets } from 'typeorm';
 import { SearchCompanyDto } from './dto/search-company.dto';
 import { SearchCompanyResponse } from 'types/company';
 import YahooFinance from 'yahoo-finance2';
-import { CreateNewsDto } from 'src/news/dto/create-news.dto';
-import { NewsService } from 'src/news/news.service';
+import { CreateNewsDto } from '../../src/news/dto/create-news.dto';
+import { NewsService } from '../../src/news/news.service';
 
 @Injectable()
 export class CompaniesService {
@@ -146,9 +146,10 @@ export class CompaniesService {
       return this.companyRepository.find({
         where:
         {
-          marketCapitalization: IsNull(),
-          type: 'Common Stock',
-          delisted: false
+          // marketCapitalization: IsNull(),
+          // type: 'Common Stock',
+          // delisted: false,
+          symbol: 'V'
         },
         order: { id: 'ASC' }
       });

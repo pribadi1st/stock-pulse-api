@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from "typeorm";
 import { Earning } from "../../earnings/entities/earning.entity";
 import { Watchlist } from "../../watchlist/entities/watchlist.entity";
-import { News } from "src/news/entities/news.entity";
+import { News } from "../../news/entities/news.entity";
 
 @Entity({ name: "companies" })
 export class Company {

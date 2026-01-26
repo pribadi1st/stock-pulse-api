@@ -4,7 +4,7 @@ import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { SearchCompanyDto } from './dto/search-company.dto';
 import { GetUser } from '../auth/get-user.decorator';
-import { Public } from 'src/auth/public.decorator';
+import { Public } from '../../src/auth/public.decorator';
 
 @Controller('companies')
 export class CompaniesController {
