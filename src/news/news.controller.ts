@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestj
 import { NewsService } from './news.service';
 import { CreateNewsDto } from './dto/create-news.dto';
 import { UpdateNewsDto } from './dto/update-news.dto';
-import { Public } from 'src/auth/public.decorator';
+import { Public } from '../../src/auth/public.decorator';
 
 @Controller('news')
 export class NewsController {
