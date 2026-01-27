@@ -98,7 +98,7 @@ model Portfolio {
   userId    String    @db.Uuid @map("user_id")
   symbol String
   quantity Float
-  avgPrice Float
+  avgPrice Float @map("avg_price")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   company Company @relation(fields: [symbol], references: [symbol], onDelete: Cascade)
@@ -125,11 +125,15 @@ model Transaction {
   type     TransactionType  // Using the enum here
   quantity Float
   price    Float
+  fee      Float           @default(0)
   userId   String          @db.Uuid @map("user_id")
   
   // Relations
   company  Company  @relation(fields: [symbol], references: [symbol])
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @map("created_at") @default(now())
+  updatedAt DateTime @map("updated_at") @default(now()) @updatedAt
 
   @@map("transactions")
 }

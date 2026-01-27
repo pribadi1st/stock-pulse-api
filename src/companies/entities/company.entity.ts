@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import { Earning } from "../../earnings/entities/earning.entity";
 import { Watchlist } from "../../watchlist/entities/watchlist.entity";
 import { News } from "../../news/entities/news.entity";
+import { Portfolio } from "../../portofolio/entities/portofolio.entity";
 
 @Entity({ name: "companies" })
 export class Company {
@@ -34,6 +35,9 @@ export class Company {
 
     @OneToMany(() => Earning, earning => earning.company)
     earnings: Earning[];
+
+    @OneToMany(() => Portfolio, portfolio => portfolio.company)
+    portfolios: Portfolio[];
 
     @Column({ nullable: true, type: 'varchar', length: 255 })
     country: string | null;

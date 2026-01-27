@@ -3,7 +3,7 @@ import { AppModule } from '../src/app.module';
 import { Logger } from '@nestjs/common';
 import { CompaniesService } from '../src/companies/companies.service';
 import YahooFinance from 'yahoo-finance2';
-import { CreateCompanyDto } from 'src/companies/dto/create-company.dto';
+import { CreateCompanyDto } from '../src/companies/dto/create-company.dto';
 
 async function bootstrap() {
     const app = await NestFactory.createApplicationContext(AppModule);
@@ -14,7 +14,8 @@ async function bootstrap() {
         // { symbol: 'AMZ', exchange: 'XETRA' },
         // { symbol: '28K1', exchange: 'FRA' },
         // { symbol: 'DTE', exchange: 'XETRA' },
-        { symbol: 'DRH', exchange: 'Munich' },
+        // { symbol: 'DRH', exchange: 'Munich' },
+        { symbol: 'VIE', exchange: 'Munich' },
         // { symbol: '5GR', exchange: 'FRA' },
         // { symbol: '82W', exchange: 'FRA' },
         // { symbol: 'F8P', exchange: 'FRA' },
@@ -34,7 +35,8 @@ async function bootstrap() {
         logger.log("Updating companies without market cap data");
         const yahooFinance = new YahooFinance();
         for (const company of companies) {
-            const results = await yahooFinance.search(company.symbol);
+            const results = await yahooFinance.search("Visa");
+            console.log(results);
             const tickerObj = results.quotes.filter(item => item.exchDisp === company.exchange)[0];
             if (tickerObj) {
                 const [quote] = await Promise.all([
