@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import { Earning } from "../../earnings/entities/earning.entity";
 import { Watchlist } from "../../watchlist/entities/watchlist.entity";
 import { News } from "../../news/entities/news.entity";
-import { Portfolio } from "../../portofolio/entities/portofolio.entity";
+import { Portfolio } from "../../portofolios/entities/portofolio.entity";
 
 @Entity({ name: "companies" })
 export class Company {

@@ -15,6 +15,7 @@ import { WatchlistModule } from './watchlist/watchlist.module';
 import { APP_GUARD } from '@nestjs/core';
 import { NewsModule } from './news/news.module';
 import { TransactionsModule } from './transactions/transactions.module';
+import { PortofoliosModule } from './portofolios/portofolios.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -40,7 +41,8 @@ import { TransactionsModule } from './transactions/transactions.module';
     UsersModule,
     WatchlistModule,
     NewsModule,
-    TransactionsModule
+    TransactionsModule,
+    PortofoliosModule
   ],
   controllers: [AppController],
   providers: [AppService, SupabaseStrategy, JwtAuthGuard, { provide: APP_GUARD, useClass: JwtAuthGuard }],

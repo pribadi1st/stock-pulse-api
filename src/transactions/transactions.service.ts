@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { Transaction } from './entities/transaction.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { Portfolio } from '../../src/portofolio/entities/portofolio.entity';
+import { Portfolio } from '../../src/portofolios/entities/portofolio.entity';
 import { TransactionType } from '../../types/transaction';
 
 @Injectable()

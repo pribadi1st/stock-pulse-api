@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { Transaction } from '../../transactions/entities/transaction.entity';
-import { Portfolio } from '../../portofolio/entities/portofolio.entity';
+import { Portfolio } from '../../portofolios/entities/portofolio.entity';
 
 @Entity('users')
 export class User {
