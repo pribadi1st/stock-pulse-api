@@ -158,12 +158,28 @@ export class CompaniesService {
     }
   }
 
-  findAll() {
-    try {
-      return this.companyRepository.find();
-    } catch (e) {
-      throw new Error(e);
+  async findAll(keyword: string) {
+    const limit = 20;
+
+    const query = this.companyRepository.createQueryBuilder('c')
+      .where('c.type = :type', { type: 'Common Stock' })
+      .andWhere('c.delisted = :delisted', { delisted: false });
+
+    if (keyword) {
+      query.andWhere(
+        new Brackets((qb) => {
+          qb.where('c.name ILIKE :keyword', { keyword: `%${keyword}%` })
+            .orWhere('c.symbol ILIKE :keyword', { keyword: `%${keyword}%` });
+        }),
+      );
     }
+
+    const companies = await query
+      .orderBy('c.marketCapitalization', 'DESC')
+      .limit(limit)
+      .getMany();
+
+    return companies;
   }
 
   async findOne(userId: string, symbol: string) {
