@@ -15,9 +15,7 @@ export class WatchlistController {
 
   @Get()
   findAll(@GetUser('sub') userId: string) {
-    console.log(userId)
-    return userId
-    // return this.watchlistService.findAll(userId);
+    return this.watchlistService.findAll(userId);
   }
 
   // @Get(':id')
